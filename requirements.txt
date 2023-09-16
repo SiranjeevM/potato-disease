@@ -1,0 +1,8 @@
+tensorflow
+tensorflow
+tensorflow_hub
+python-multipart
+pillow
+matplotlib
+numpy
+flask

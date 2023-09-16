@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Potato Plant Disease Prediction</h1>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required id="imageInput" class="input-file">
+            <label for="imageInput" class="file-label">Choose an Image</label>
+            <button type="submit" class="predict-button">Predict</button>
+            <button type="button" id="clearButton" class="clear-button">Clear</button>
+        </form>
+        
+        <!-- Image preview container -->
+        <div id="imagePreview">
+            <h3>Selected Image:</h3>
+            <img id="selectedImage" src="#" alt="Selected Image">
+        </div>
+
+        {% if prediction %}
+            <h2 class="temp">Prediction: {{ prediction }}</h2>
+            <!-- Display the input image after prediction -->
+            <div id="inputAfterPrediction">
+                <h3>Input Image:</h3>
+                <img id="inputImage" src="{{ input_image }}" alt="Input Image">
+            </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // JavaScript to display the selected image
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const selectedImage = document.getElementById('selectedImage');
+        const inputAfterPrediction = document.getElementById('inputAfterPrediction');
+        const inputImage = document.getElementById('inputImage');
+        const clearButton = document.getElementById('clearButton');
+        const predictionText = document.querySelector('.temp'); // Updated to target the prediction text
+
+        function showImagePreview(file) {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    selectedImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+    
+                // Show the image preview container
+                imagePreview.style.display = 'block';
+                imagePreview.style.animation = 'fade-in 0.5s';
+            } else {
+                // Hide the image preview container with animation if no file is selected
+                imagePreview.style.animation = 'fade-out 0.5s';
+                setTimeout(() => {
+                    imagePreview.style.display = 'none';
+                }, 500);
+            }
+        }
+    
+        imageInput.addEventListener('change', function () {
+            showImagePreview(imageInput.files[0]);
+        });
+    
+        // Call showImagePreview when the page loads to display the selected image if it exists
+        window.addEventListener('load', function () {
+            showImagePreview(imageInput.files[0]);
+        });
+    
+        clearButton.addEventListener('click', function () {
+            // Clear the selected image and input image
+            selectedImage.src = '';
+            inputImage.src = '';
+    
+            // Clear the prediction text
+            predictionText.textContent = ''; // Clear the prediction text
+    
+            // Hide the image preview containers
+            imagePreview.style.animation = 'fade-out 0.5s';
+            inputAfterPrediction.style.animation = 'fade-out 0.5s';
+    
+            setTimeout(() => {
+                imagePreview.style.display = 'none';
+                inputAfterPrediction.style.display = 'none';
+            }, 500);
+        });
+    
+        // JavaScript to display the input image after prediction
+        {% if input_image %}
+            inputImage.src = '{{ input_image }}';
+            inputAfterPrediction.style.display = 'block';
+        {% endif %}
+    </script>
+</body>
+</html> 
